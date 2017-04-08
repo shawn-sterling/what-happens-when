@@ -142,7 +142,14 @@ requires for ensuring packet delivery and ordering is added and then an IP
 packet is fashioned. The IP packet is then handed off to the physical network
 layer which inspects the target IP address, looks up the subnet in its route
 tables and wrapped in an ethernet frame with the proper gateway address as the
-recipient. At this point the packet is ready to be transmitted through either:
+recipient. 
+
+At layer 2 of of the OSI model the machine will check its local MAC address
+table to find its gateway. If it has never communicated with it before it will
+send a broadcast asking for the address, which will be returned by the
+router.
+
+At this point the packet is ready to be transmitted through either:
 
 * `Ethernet`_
 * `WiFi`_
@@ -158,6 +165,14 @@ analyzed further.
 This address lookup and wrapping of datagrams continues until one of two things
 happen, the time-to-live value for a datagram reaches zero at which point the
 packet is dropped or it reaches the destination.
+
+The target IP address resolved from DNS is stored in the packet headers as a
+'destination' address, because this address is not reachable locally, it is
+repeatedly forwarded by connected routers on the internet based on routing
+algorithims which bring the packet progressively closer to its endpoint by
+'hopping' between backbone connections until the router which owns that
+subnet space recieves the packet, then forwards it internally over layer 2 to the
+resonsible MAC address on its network (load balancer, server)
 
 This send and receive happens multiple times following the TCP connection flow:
 
